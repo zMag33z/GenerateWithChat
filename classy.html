@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative Art with Circles and Squares</title>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        class RandomShape {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.velocityX = (Math.random() - 0.5) * 2; // Random horizontal velocity
+                this.velocityY = (Math.random() - 0.5) * 2; // Random vertical velocity
+            }
+
+            update() {
+                this.x += this.velocityX;
+                this.y += this.velocityY;
+
+                // Wrap shapes around the canvas edges
+                if (this.x < 0) this.x = this.canvas.width;
+                if (this.x > this.canvas.width) this.x = 0;
+                if (this.y < 0) this.y = this.canvas.height;
+                if (this.y > this.canvas.height) this.y = 0;
+            }
+        }
+
+        class RandomCircle extends RandomShape {
+            constructor(canvas) {
+                super(canvas);
+                this.radius = Math.random() * 50;
+                this.color = this.randomColor();
+            }
+
+            randomColor() {
+                const r = Math.floor(Math.random() * 256);
+                const g = Math.floor(Math.random() * 256);
+                const b = Math.floor(Math.random() * 256);
+                return `rgb(${r},${g},${b})`;
+            }
+
+            draw() {
+                this.ctx.fillStyle = this.color;
+                this.ctx.beginPath();
+                this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
+        }
+
+        class RandomSquare extends RandomShape {
+            constructor(canvas) {
+                super(canvas);
+                this.size = Math.random() * 50;
+                this.color = this.randomColor();
+            }
+
+            randomColor() {
+                const r = Math.floor(Math.random() * 256);
+                const g = Math.floor(Math.random() * 256);
+                const b = Math.floor(Math.random() * 256);
+                return `rgb(${r},${g},${b})`;
+            }
+
+            draw() {
+                this.ctx.fillStyle = this.color;
+                this.ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
+        }
+
+        const canvas = document.getElementById('canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+
+        const shapes = [];
+
+        // Create initial circles and squares
+        for (let i = 0; i < 50; i++) {
+            shapes.push(new RandomCircle(canvas));
+            shapes.push(new RandomSquare(canvas));
+        }
+
+        function animate() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Update and draw each shape
+            for (const shape of shapes) {
+                shape.update();
+                shape.draw();
+            }
+
+            // Request the next animation frame
+            requestAnimationFrame(animate);
+        }
+
+        // Start the animation loop
+        animate();
+    </script>
+</body>
+</html>

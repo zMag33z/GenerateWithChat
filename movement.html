@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Generative Art Example</title>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function randomColor() {
+            const r = Math.floor(Math.random() * 256);
+            const g = Math.floor(Math.random() * 256);
+            const b = Math.floor(Math.random() * 256);
+            return `rgb(${r},${g},${b})`;
+        }
+
+        // Create an array to store information about each circle
+        const circles = [];
+
+        function createCircle() {
+            const circle = {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 50,
+                color: randomColor(),
+                velocityX: (Math.random() - 0.5) * 2, // Random horizontal velocity
+                velocityY: (Math.random() - 0.5) * 2, // Random vertical velocity
+            };
+            circles.push(circle);
+        }
+
+        function drawCircle(circle) {
+            ctx.fillStyle = circle.color;
+            ctx.beginPath();
+            ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function update() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Update and draw each circle
+            for (const circle of circles) {
+                circle.x += circle.velocityX;
+                circle.y += circle.velocityY;
+
+                // Wrap circles around the canvas edges
+                if (circle.x < 0) circle.x = canvas.width;
+                if (circle.x > canvas.width) circle.x = 0;
+                if (circle.y < 0) circle.y = canvas.height;
+                if (circle.y > canvas.height) circle.y = 0;
+
+                drawCircle(circle);
+            }
+
+            // Request the next animation frame
+            requestAnimationFrame(update);
+        }
+
+        // Create initial circles
+        for (let i = 0; i < 100; i++) {
+            createCircle();
+        }
+
+        // Start the animation loop
+        update();
+    </script>
+</body>
+</html>
